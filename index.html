@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Downloader</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="scripts/utils.js" defer></script>
+    <script src="scripts/main.js" defer></script>
+  </head>
+  <body>
+    <div class="app container">
+      <header class="header">
+        <h1 class="title">YouTube Downloader</h1>
+        <p class="subtitle">Download YouTube videos, audio and subtitles online for free</p>
+
+        <div class="url-input">
+          <input type="text" placeholder="Enter Video URL here" onchange="fetchData()" />
+          <button class="button" onclick="fetchData()"><i class="bi bi-search"></i></button>
+        </div>
+        <span class="message hidden"></span>
+      </header>
+
+      <div class="output-panel hidden">
+        <table class="download-menu">
+          <tbody></tbody>
+        </table>
+
+        <div class="preview"></div>
+      </div>
+    </div>
+  </body>
+</html>
