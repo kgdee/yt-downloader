@@ -63,23 +63,6 @@ function getFileExtension(file) {
   return getFileName(file).split(".").pop();
 }
 
-async function convertSrtToVtt(srtFile) {
-  if (!srtFile) return "";
-
-  let srtText = await getFileText(srtFile);
-
-  // Convert SRT to VTT format
-  let vttText =
-    "WEBVTT\n\n" +
-    srtText
-      .replace(/\r\n|\r|\n/g, "\n") // Normalize new lines
-      .replace(/(\d+)\n(\d{2}:\d{2}:\d{2}),(\d{3}) --> (\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1\n$2.$3 --> $4.$5");
-
-  const blob = new Blob([vttText], { type: "text/vtt" });
-  const dataUrl = URL.createObjectURL(blob);
-  return dataUrl;
-}
-
 function changeScreen(screenName) {
   document.querySelectorAll(".screen").forEach((element) => {
     element.classList.add("hidden");
@@ -115,4 +98,52 @@ function formatTime(totalSeconds) {
   const seconds = totalSeconds % 60;
 
   return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function convertXmlToSrt(text) {
+  // Parse XML
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(text, "text/xml");
+  const texts = xml.getElementsByTagName("text");
+
+  let srtText = "";
+  for (let i = 0; i < texts.length; i++) {
+    const start = parseFloat(texts[i].getAttribute("start"));
+    const dur = parseFloat(texts[i].getAttribute("dur") || 2);
+    const end = start + dur;
+    const content = texts[i].textContent.replace(/\n+/g, " ");
+
+    // Convert seconds to HH:MM:SS,MS
+    const formatTime = (t) => {
+      const h = String(Math.floor(t / 3600)).padStart(2, "0");
+      const m = String(Math.floor((t % 3600) / 60)).padStart(2, "0");
+      const s = String(Math.floor(t % 60)).padStart(2, "0");
+      const ms = String(Math.floor((t % 1) * 1000)).padStart(3, "0");
+      return `${h}:${m}:${s},${ms}`;
+    };
+
+    srtText += `${i + 1}\n${formatTime(start)} --> ${formatTime(end)}\n${content}\n\n`;
+  }
+
+  return srtText
+}
+
+async function downloadSubtitle(url, name) {
+  const response = await fetch(url);
+  const xmlText = await response.text();
+  const srtText = convertXmlToSrt(xmlText)
+
+  const blob = new Blob([srtText]);
+  downloadBlob(blob, name)
+}
+
+function downloadBlob(blob, name) {
+  const a = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = name; // force download with this name
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }

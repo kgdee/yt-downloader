@@ -8,11 +8,11 @@ let data = null;
 let audios = [];
 let videos = [];
 let subtitles = [];
-let isLoading = false
+let isLoading = false;
 
 async function fetchData() {
-  if (isLoading) return
-  isLoading = true
+  if (isLoading) return;
+  isLoading = true;
   const videoId = getVideoId(urlInput.value);
   messageEl.classList.toggle("hidden", videoId);
   if (!videoId) {
@@ -40,7 +40,7 @@ async function fetchData() {
   updateDownloadMenu();
   updatePreview();
 
-  isLoading = false
+  isLoading = false;
 }
 
 function updateDownloadMenu() {
@@ -85,7 +85,7 @@ function updateDownloadMenu() {
         <tr> 
           <td>${item.code}</td>
           <td>${item.text}</td>
-          <td><button class="button" onclick="window.open('${item.url}', '_blank')">Download</button></td>
+          <td><button class="button" onclick="downloadSubtitle('${item.url}', '${data.title}.srt')">Download</button></td>
         </tr>  
       `
          )
