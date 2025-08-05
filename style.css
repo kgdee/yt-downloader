@@ -162,6 +162,10 @@ body {
   object-fit: cover;
 }
 
+.output-panel .preview select {
+  border: 1px solid var(--border-color);
+}
+
 /* Medium screens (Tablets, up to 768px wide) */
 @media (max-width: 768px) {
   .output-panel {

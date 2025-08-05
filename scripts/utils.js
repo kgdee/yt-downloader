@@ -128,22 +128,16 @@ function convertXmlToSrt(text) {
   return srtText
 }
 
-async function downloadSubtitle(url, name) {
+async function download(url, name) {
   const response = await fetch(url);
-  const xmlText = await response.text();
-  const srtText = convertXmlToSrt(xmlText)
+  const blob = await response.blob()
+  const blobUrl = URL.createObjectURL(blob);
 
-  const blob = new Blob([srtText]);
-  downloadBlob(blob, name)
-}
-
-function downloadBlob(blob, name) {
   const a = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  a.href = url;
-  a.download = name; // force download with this name
+  a.href = blobUrl;
+  a.download = name;
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(blobUrl);
 }

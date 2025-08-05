@@ -17,7 +17,7 @@
         <p class="subtitle">Download YouTube videos, audio and subtitles online for free</p>
 
         <div class="url-input">
-          <input type="text" placeholder="Enter Video URL here" onchange="fetchData()" />
+          <input type="text" placeholder="Enter Video URL here" onchange="fetchData()" onfocus="this.select()" />
           <button class="button" onclick="fetchData()"><i class="bi bi-search"></i></button>
         </div>
         <span class="message hidden"></span>

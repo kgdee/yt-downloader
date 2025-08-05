@@ -85,7 +85,7 @@ function updateDownloadMenu() {
         <tr> 
           <td>${item.code}</td>
           <td>${item.text}</td>
-          <td><button class="button" onclick="downloadSubtitle('${item.url}', '${data.title}.srt')">Download</button></td>
+          <td><button class="button" onclick="downloadSubtitle('${item.url}')">Download</button></td>
         </tr>  
       `
          )
@@ -96,6 +96,14 @@ function updateDownloadMenu() {
 function updatePreview() {
   preview.innerHTML = `
     <img class="thumbnail" src="${data.thumbnails[0].url}">
+    <select onchange="downloadThumbnail(this.value)">
+      <option value="">Download Thumbnail</option>
+      ${data.thumbnails.map(
+        (thumbnail) => `
+        <option value="${thumbnail.url}">${thumbnail.width}x${thumbnail.height}</option>  
+      `
+      )}
+    </select>     
     <h2 class="title">${data.title}</h2>
     <p class="duration">Duration: ${formatTime(data.lengthSeconds)}</p>
   `;
@@ -108,6 +116,17 @@ function getVideoId(url) {
   return videoId;
 }
 
-document.addEventListener("keydown", function (event) {
-  if (event.key === " ") fetchData();
-});
+function downloadThumbnail(url) {
+  if (!url) return;
+  download(url, `${data.title}.jpg`);
+}
+
+async function downloadSubtitle(url) {
+  const response = await fetch(url);
+  const xmlText = await response.text();
+  const srtText = convertXmlToSrt(xmlText);
+
+  const blob = new Blob([srtText]);
+  const blobUrl = URL.createObjectURL(blob);
+  download(blobUrl, `${data.title}.srt`);
+}
